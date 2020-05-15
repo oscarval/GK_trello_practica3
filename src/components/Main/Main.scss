@@ -1,0 +1,17 @@
+@import "../../assets/styles/palette.scss";
+
+.Main {
+  background-color: $colorB3;
+  .Main-lists {
+    height: 82vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow-x: auto;
+    .Main-list {
+      background-color: $colorGray5;
+      margin: 5px 10px;
+    }
+  }
+}
