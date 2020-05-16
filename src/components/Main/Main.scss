@@ -2,6 +2,7 @@
 
 .Main {
   background-color: $colorB3;
+  color: $colorT3;
   .Main-lists {
     height: 82vh;
     display: flex;
@@ -10,8 +11,56 @@
     align-items: flex-start;
     overflow-x: auto;
     .Main-list {
-      background-color: $colorGray5;
+      min-width: 200px;
+      max-width: 200px;
+      flex-basis: auto; /* default value */
+      flex-grow: 1;
+      background-color: $colorGray3;
       margin: 5px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      .Main-list-title {
+        padding: 5px 10px;
+      }
+      .Main-list-items {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        .item {
+          display: flex;
+          margin: 5px 5px;
+          border-radius: 5px;
+          border: 2px solid $colorGray3;
+          height: 50px;
+          background-color: $colorGray2;
+          font-size: 0.8rem;
+          .item-textarea {
+            width: 100%;
+            height: 50px;
+            background-color: $colorGray1;
+            font-size: 1rem;
+            text-align: left;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            padding: 2px;
+          }
+        }
+      }
+    }
+    .Main-list-footer {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      .Main-list-add-item {
+        background-color: $colorB5;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
     }
   }
+}
+
+textarea {
+  all: unset;
 }
