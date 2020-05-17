@@ -27,6 +27,6 @@ const Main = (props) => {
 const mapStateToProps = (state) => ({ state: state });
 const mapDispacthToProps = (dispatch) => ({});
 
-const connectedNavbar = connect(mapStateToProps, mapDispacthToProps)(Main);
+const connectedMain = connect(mapStateToProps, mapDispacthToProps)(Main);
 
-export default connectedNavbar;
+export default connectedMain;
