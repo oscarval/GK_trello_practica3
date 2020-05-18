@@ -4,7 +4,10 @@ import "./Navbar.scss";
 
 const Navbar = (props) => {
   const addList = () => {
-    props.addList(Date.now());
+    const title = prompt("Please enter your list name (min length 3).", "");
+    if (title) {
+      props.addList(Date.now(), title);
+    }
   };
 
   return (
@@ -20,12 +23,15 @@ const Navbar = (props) => {
 };
 
 const mapDispacthToProps = (dispatch) => ({
-  addList: (idList) => {
-    console.log("New list wiht id: ", idList);
-    // dispatch({
-    //   type: "ADD_LIST",
-    //   payload: Date.now(),
-    // });
+  addList: (idList, title) => {
+    dispatch({
+      type: "ADD_LIST",
+      payload: {
+        id: idList,
+        title: title,
+        tasks: [],
+      },
+    });
   },
 });
 

@@ -7,13 +7,14 @@ const ItemList = (props) => {
   const refItemText = useRef();
 
   const [values, setValues] = useState({
-    task: "texto1",
+    task: "",
   });
 
   const finishEdit = (e) => {
     refItemTextarea.current.classList.add("hide");
     refItemText.current.classList.add("show");
     refItemText.current.innerHTML = values.task;
+    props.updateTask(props.idList, props.idTask, values.task);
   };
 
   const editItem = (e) => {
@@ -29,7 +30,7 @@ const ItemList = (props) => {
   };
 
   return (
-    <div className='Item-list' id={props.itemId}>
+    <div className='Item-list'>
       <div ref={refItemText} className='Item-text' onClick={editItem}></div>
       <textarea
         ref={refItemTextarea}
@@ -43,7 +44,18 @@ const ItemList = (props) => {
 };
 
 const mapStateToProps = (state) => ({ state: state });
-const mapDispacthToProps = (dispatch) => ({});
+const mapDispacthToProps = (dispatch) => ({
+  updateTask: (idList, idTask, text) => {
+    dispatch({
+      type: "UPDATE_TASK",
+      payload: {
+        idList: idList,
+        idTask: idTask,
+        text: text,
+      },
+    });
+  },
+});
 
 const connectedItemList = connect(
   mapStateToProps,
