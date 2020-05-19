@@ -1,13 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import "./Item-list.scss";
 
 const ItemList = (props) => {
   const refItemTextarea = useRef();
   const refItemText = useRef();
+  const refContent = useRef();
 
   const [values, setValues] = useState({
-    task: "",
+    task: props.text ? props.text : "",
   });
 
   const finishEdit = (e) => {
@@ -26,11 +27,41 @@ const ItemList = (props) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({ ...values, [name]: value });
+    setValues({ ...values, [name]: value.replace(/\r?\n/gi, "") });
+    if (event.which === 13) {
+      finishEdit();
+    }
+  };
+
+  useEffect(() => {
+    if (props.text) {
+      finishEdit();
+    } else {
+      editItem();
+    }
+  }, []);
+
+  /**
+   * Drag funtions
+   */
+  const handleDragStart = (e) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData(
+      "object",
+      JSON.stringify({
+        idTask: +refContent.current.id,
+        oldIdList: props.idList,
+      })
+    );
   };
 
   return (
-    <div className='Item-list'>
+    <div
+      ref={refContent}
+      className='Item-list'
+      draggable='true'
+      onDragStart={handleDragStart}
+      id={props.idTask}>
       <div ref={refItemText} className='Item-text' onClick={editItem}></div>
       <textarea
         ref={refItemTextarea}
@@ -38,6 +69,7 @@ const ItemList = (props) => {
         name='task'
         value={values.task}
         onChange={handleChange}
+        onKeyUp={handleChange}
         onBlur={finishEdit}></textarea>
     </div>
   );

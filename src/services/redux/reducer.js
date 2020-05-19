@@ -51,6 +51,40 @@ function reducer(state = initialState, action) {
         ...state,
         lists: updateList,
       };
+    case "MOVE_TASK_LIST":
+      let taskToMove = null;
+      const removeTaskList = state.lists.map((list) => {
+        if (list.id === action.payload.oldIdList) {
+          return {
+            ...list,
+            tasks: list.tasks.filter((task) => {
+              if (task.id !== action.payload.idTask) {
+                return true;
+              } else {
+                taskToMove = task;
+                return false;
+              }
+            }),
+          };
+        }
+        return list;
+      });
+
+      const updateTaskList = removeTaskList.map((list) => {
+        if (list.id === action.payload.newIdList) {
+          return {
+            ...list,
+            tasks: [...list.tasks, taskToMove],
+          };
+        }
+        return list;
+      });
+
+      return {
+        ...state,
+        lists: updateTaskList,
+      };
+
     default:
       return state;
   }
