@@ -6,6 +6,7 @@ import ItemList from "../Item-list/Item-list";
 const List = (props) => {
   const listItems = props.state.lists.find((list) => list.id === props.idList);
   const refListItems = useRef();
+  const refShadow = useRef();
 
   const addTask = () => {
     props.addTask(listItems.id, Date.now());
@@ -14,37 +15,72 @@ const List = (props) => {
   const handleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    //const domShadow = document.getElementById(`#${props.idList}-1`);
+    //console.log(domShadow);
     // console.log("dragenter", e);
+    // if (e.target.className.indexOf("Item-list") !== -1) {
+    //   // const originDom = document.getElementById("" + props.state.idItemDrag);
+    //   let originDom = document.createElement('div');
+    //   originDom.className = "shadow";
+    //   if (isBefore(originDom, e.target)) {
+    //     e.target.parentNode.insertBefore(originDom, e.target);
+    //   } else {
+    //     e.target.parentNode.insertBefore(originDom, e.target.nextSibling);
+    //   }
+    // }
   };
+
+  const isBefore = (el1, el2) => {
+    if (el2.parentNode === el1.parentNode)
+      for (
+        var cur = el1.previousSibling;
+        cur && cur.nodeType !== 9;
+        cur = cur.previousSibling
+      )
+        if (cur === el2) return true;
+    return false;
+  };
+
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // console.log("handleDragLeave", e);
+    if (props.idList !== props.state.idListDrag) {
+      refShadow.current.classList.add("hide");
+    }
   };
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // console.log("handleDragOver", e);
     e.dataTransfer.dropEffect = "move";
+    if (props.idList !== props.state.idListDrag) {
+      refShadow.current.classList.remove("hide");
+    }
   };
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const data = JSON.parse(e.dataTransfer.getData("object"));
-    //const dom = document.getElementById(data.idTask);
-    //refListItems.current.appendChild(dom);
-    props.moveTask(data.oldIdList, props.idList, data.idTask);
+    refShadow.current.classList.add("hide");
+    props.updateIdItemDrag(null, null);
+    props.moveTask(
+      props.state.idListDrag,
+      props.idList,
+      props.state.idItemDrag
+    );
   };
 
   return (
     <div
       className='List'
-      onDragOver={(e) => handleDragOver(e)}
       onDragEnter={(e) => handleDragEnter(e)}
       onDragLeave={(e) => handleDragLeave(e)}
-      onDrop={(e) => handleDrop(e)}>
+      onDrop={(e) => handleDrop(e)}
+      id={props.idList}>
       <div className='List-title'>{props.title}</div>
-      <div ref={refListItems} className='List-items'>
+      <div
+        ref={refListItems}
+        className='List-items'
+        onDragOver={(e) => handleDragOver(e)}>
         {listItems.tasks.map((task) => {
           return (
             <ItemList
@@ -55,6 +91,10 @@ const List = (props) => {
             />
           );
         })}
+        <div
+          ref={refShadow}
+          className='Item-list shadow hide'
+          id='Item-list-1'></div>
       </div>
       <div className='List-footer'>
         <div className='List-add-item' onClick={addTask}>
@@ -83,6 +123,15 @@ const mapDispacthToProps = (dispatch) => ({
         oldIdList: oldIdList,
         newIdList: newIdList,
         idTask: idTask,
+      },
+    });
+  },
+  updateIdItemDrag: (idTask, idList) => {
+    dispatch({
+      type: "UPDATE_ITEM_DRAG",
+      payload: {
+        idTask: idTask,
+        idList: idList,
       },
     });
   },

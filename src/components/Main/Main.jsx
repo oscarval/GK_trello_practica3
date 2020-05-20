@@ -7,9 +7,10 @@ const Main = (props) => {
   return (
     <div className='Main'>
       <div className='Main-lists'>
-        {props.state.lists.map((list) => {
-          return <List key={list.id} title={list.title} idList={list.id}/>;
-        })}
+        {props.state.lists &&
+          props.state.lists.map((list) => {
+            return <List key={list.id} title={list.title} idList={list.id} />;
+          })}
       </div>
     </div>
   );

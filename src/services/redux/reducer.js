@@ -1,6 +1,8 @@
 const initialState = {
   visibility: "ALL",
   lists: [],
+  idItemDrag: null,
+  idListDrag: null,
 };
 
 function reducer(state = initialState, action) {
@@ -83,6 +85,14 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         lists: updateTaskList,
+      };
+
+    case "UPDATE_ITEM_DRAG":
+      return {
+        ...state,
+        ...state.lists,
+        idItemDrag: action.payload.idTask,
+        idListDrag: action.payload.idList,
       };
 
     default:

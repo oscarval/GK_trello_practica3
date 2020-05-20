@@ -12,17 +12,21 @@ const ItemList = (props) => {
   });
 
   const finishEdit = (e) => {
-    refItemTextarea.current.classList.add("hide");
-    refItemText.current.classList.add("show");
-    refItemText.current.innerHTML = values.task;
-    props.updateTask(props.idList, props.idTask, values.task);
+    if (refItemTextarea.current) {
+      refItemTextarea.current.classList.add("hide");
+      refItemText.current.classList.add("show");
+      refItemText.current.innerHTML = values.task;
+      props.updateTask(props.idList, props.idTask, values.task);
+    }
   };
 
   const editItem = (e) => {
-    refItemText.current.classList.remove("show");
-    refItemText.current.classList.add("hide");
-    refItemTextarea.current.classList.remove("hide");
-    refItemTextarea.current.focus();
+    if (refItemTextarea.current) {
+      refItemText.current.classList.remove("show");
+      refItemText.current.classList.add("hide");
+      refItemTextarea.current.classList.remove("hide");
+      refItemTextarea.current.focus();
+    }
   };
 
   const handleChange = (event) => {
@@ -46,13 +50,7 @@ const ItemList = (props) => {
    */
   const handleDragStart = (e) => {
     e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData(
-      "object",
-      JSON.stringify({
-        idTask: +refContent.current.id,
-        oldIdList: props.idList,
-      })
-    );
+    props.updateIdItemDrag(props.idTask, props.idList);
   };
 
   return (
@@ -60,7 +58,7 @@ const ItemList = (props) => {
       ref={refContent}
       className='Item-list'
       draggable='true'
-      onDragStart={handleDragStart}
+      onDragStart={(e) => handleDragStart(e)}
       id={props.idTask}>
       <div ref={refItemText} className='Item-text' onClick={editItem}></div>
       <textarea
@@ -84,6 +82,15 @@ const mapDispacthToProps = (dispatch) => ({
         idList: idList,
         idTask: idTask,
         text: text,
+      },
+    });
+  },
+  updateIdItemDrag: (idTask, idList) => {
+    dispatch({
+      type: "UPDATE_ITEM_DRAG",
+      payload: {
+        idTask: idTask,
+        idList: idList,
       },
     });
   },
