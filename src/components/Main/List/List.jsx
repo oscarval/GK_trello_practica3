@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import { connect } from "react-redux";
 import "./List.scss";
 import ItemList from "../Item-list/Item-list";
+import deleteIcon from "../../../assets/img/delete.png";
+import Sortable from 'sortablejs';
 
 const List = (props) => {
   const listItems = props.state.lists.find((list) => list.id === props.idList);
@@ -12,23 +14,77 @@ const List = (props) => {
     props.addTask(listItems.id, Date.now());
   };
 
+  const deleteList = (e) => {
+    const result = window.confirm("Are you sure to delete list?");
+    if (result) {
+      props.deleteList(props.idList);
+    }
+  };
+
   const handleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
+  };
 
-    //const domShadow = document.getElementById(`#${props.idList}-1`);
-    //console.log(domShadow);
-    // console.log("dragenter", e);
-    // if (e.target.className.indexOf("Item-list") !== -1) {
-    //   // const originDom = document.getElementById("" + props.state.idItemDrag);
-    //   let originDom = document.createElement('div');
-    //   originDom.className = "shadow";
-    //   if (isBefore(originDom, e.target)) {
-    //     e.target.parentNode.insertBefore(originDom, e.target);
-    //   } else {
-    //     e.target.parentNode.insertBefore(originDom, e.target.nextSibling);
-    //   }
-    // }
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (
+      // props.idList !== props.state.idListDrag &&
+      e.target.className.indexOf("Item-list") === -1
+      // &&
+      // e.target.className.indexOf("Item-text") === -1 &&
+      // e.target.className.indexOf("shadow") === -1
+    ) {
+      // console.log("leave", e.target);
+      //refShadow.current.classList.add("hide");
+    }
+  };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "move";
+    // if (props.idList !== props.state.idListDrag) {
+    if (
+      e.target.className.indexOf("Item-text") !== -1 &&
+      e.target.className.indexOf("shadow") === -1
+    ) {
+      try {
+        refShadow.current.classList.remove("hide");
+        // if (
+        //   e.target.className.indexOf("Item-text") !== -1
+        //   // ||
+        //   // e.target.className.indexOf("shadow") !== -1
+        // ) {
+        if (isBefore(refShadow.current, e.target.parentNode)) {
+          e.target.parentNode.parentNode.insertBefore(
+            refShadow.current,
+            e.target.parentNode
+          );
+        } else {
+          e.target.parentNode.parentNode.insertBefore(
+            refShadow.current,
+            e.target.parentNode
+          );
+        }
+        // }
+      } catch (e) {
+        // nothing
+      }
+    }
+  };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    document
+      .querySelectorAll(".shadow")
+      .forEach((el) => el.classList.add("hide"));
+    props.updateIdItemDrag(null, null);
+    props.moveTask(
+      props.state.idListDrag,
+      props.idList,
+      props.state.idItemDrag
+    );
   };
 
   const isBefore = (el1, el2) => {
@@ -42,33 +98,6 @@ const List = (props) => {
     return false;
   };
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (props.idList !== props.state.idListDrag) {
-      refShadow.current.classList.add("hide");
-    }
-  };
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = "move";
-    if (props.idList !== props.state.idListDrag) {
-      refShadow.current.classList.remove("hide");
-    }
-  };
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    refShadow.current.classList.add("hide");
-    props.updateIdItemDrag(null, null);
-    props.moveTask(
-      props.state.idListDrag,
-      props.idList,
-      props.state.idItemDrag
-    );
-  };
-
   return (
     <div
       className='List'
@@ -76,7 +105,12 @@ const List = (props) => {
       onDragLeave={(e) => handleDragLeave(e)}
       onDrop={(e) => handleDrop(e)}
       id={props.idList}>
-      <div className='List-title'>{props.title}</div>
+      <div className='List-header'>
+        <div className='List-title'> {props.title}</div>
+        <div className='List-delete' onClick={deleteList}>
+          <img src={deleteIcon} alt='delete' />
+        </div>
+      </div>
       <div
         ref={refListItems}
         className='List-items'
@@ -113,6 +147,14 @@ const mapDispacthToProps = (dispatch) => ({
       payload: {
         idList: idList,
         idTask: idTask,
+      },
+    });
+  },
+  deleteList: (idList) => {
+    dispatch({
+      type: "DELETE_LIST",
+      payload: {
+        idList: idList,
       },
     });
   },

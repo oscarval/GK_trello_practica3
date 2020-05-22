@@ -8,11 +8,13 @@
   padding: 3vh;
   height: 3vh;
   align-items: center;
-  div {
-    margin-right: 20px;
+  .Navbar-logo img{
+    width: 30px;
+    margin-right: 5px;
   }
   .Navbar-title {
     font-size: 1.5rem;
+    margin-right: 20px;
   }
   .Navbar-actions {
     .button {
@@ -20,6 +22,9 @@
       cursor: pointer;
       padding: 5px 10px;
       border-radius: 5px;
+      &:hover {
+        background-color: $colorB3;
+      }
     }
   }
 }

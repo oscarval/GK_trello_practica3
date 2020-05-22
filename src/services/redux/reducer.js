@@ -20,6 +20,12 @@ function reducer(state = initialState, action) {
         ],
       };
 
+    case "DELETE_LIST":
+      return {
+        ...state,
+        lists: state.lists.filter((list) => list.id !== action.payload.idList),
+      };
+
     case "ADD_TASK":
       return {
         ...state,
@@ -52,6 +58,24 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         lists: updateList,
+      };
+
+    case "DELETE_TASK":
+      const newListTasks = state.lists.map((list) => {
+        if (list.id === action.payload.idList) {
+          return {
+            ...list,
+            tasks: list.tasks.filter(
+              (task) => task.id !== action.payload.idTask
+            ),
+          };
+        }
+        return list;
+      });
+
+      return {
+        ...state,
+        lists: newListTasks,
       };
     case "MOVE_TASK_LIST":
       let taskToMove = null;
