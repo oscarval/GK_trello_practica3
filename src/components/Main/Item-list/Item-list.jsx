@@ -47,9 +47,10 @@ const ItemList = (props) => {
 
   useEffect(() => {
     if (props.text) {
-      finishEdit();
-    } else {
-      editItem();
+      refItemTextarea.current.classList.add("hide");
+      refItemText.current.classList.add("show");
+      refDelete.current.classList.remove("hide");
+      refItemText.current.innerHTML = values.task;
     }
   }, []);
 
@@ -62,16 +63,14 @@ const ItemList = (props) => {
   };
 
   return (
-    <div
-      ref={refContent}
-      className='Item-list'
-      draggable='true'
-      onDragStart={(e) => handleDragStart(e)}
-      id={props.idTask}>
+    <div ref={refContent} className='Item-list' id={props.idTask}>
       <div ref={refDelete} className='Item-delete' onClick={deleteTask}>
         <img src={deleteIcon} alt='delete' />
       </div>
-      <div ref={refItemText} className='Item-text' onClick={editItem}></div>
+      <div
+        ref={refItemText}
+        className='Item-text'
+        onDoubleClick={editItem}></div>
       <textarea
         ref={refItemTextarea}
         className='Item-textarea'
