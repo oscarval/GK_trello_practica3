@@ -1,0 +1,49 @@
+@import "../../../assets/styles/palette.scss";
+
+.List {
+  min-width: 200px;
+  max-width: 200px;
+  flex-basis: auto; /* default value */
+  flex-grow: 1;
+  background-color: $colorGray2;
+  margin: 5px 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  .List-header {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .List-delete {
+      cursor: pointer;
+    }
+  }
+  .List-items {
+    min-height: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .List-footer {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    .List-add-item {
+      background-color: $colorB5;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: $colorT1;
+      &:hover {
+        background-color: $colorB3;
+      }
+    }
+  }
+}
+
+.List .List-items .shadow {
+  background-color: $colorGray3;
+  height: 48px;
+}

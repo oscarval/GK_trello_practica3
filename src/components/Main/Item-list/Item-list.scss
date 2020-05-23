@@ -1,0 +1,45 @@
+@import "../../../assets/styles/palette.scss";
+
+.Item-list {
+  display: flex;
+  margin: 5px 5px;
+  border-radius: 5px;
+  background-color: $colorGray1;
+  font-size: 0.8rem;
+  .Item-textarea {
+    overflow-wrap: break-word;
+    width: 100%;
+    min-height: 42px;
+    background-color: $colorGray1;
+    text-align: left;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+  .Item-text.show {
+    overflow-wrap: break-word;
+    width: 85%;
+    min-height: 48px;
+    text-align: left;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    padding: 5px;
+    cursor: move;
+  }
+  .Item-delete {
+    order: 2;
+    cursor: pointer;
+  }
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+textarea {
+  all: unset;
+}

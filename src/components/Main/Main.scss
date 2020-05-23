@@ -1,0 +1,17 @@
+@import "../../assets/styles/palette.scss";
+
+.Main {
+  // background-color: $colorB3;
+  background: url("../../assets/img/background.jpeg") no-repeat top center;
+  background-size: cover;
+  color: $colorT3;
+  padding: 0 10px;
+  .Main-lists {
+    height: 82vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow-x: auto;
+  }
+}
