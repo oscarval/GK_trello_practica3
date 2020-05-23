@@ -1,16 +1,15 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import "./List.scss";
 import ItemList from "../Item-list/Item-list";
 import deleteIcon from "../../../assets/img/delete.png";
-import Sortable from "sortablejs/modular/sortable.complete.esm.js";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 
 const List = (props) => {
   const listItems = props.state.lists.find((list) => list.id === props.idList);
-  const refListItems = useRef();
 
   const addTask = () => {
-    props.addTask(listItems.id, Date.now());
+    props.addTask(listItems.id, "Item-" + Date.now());
   };
 
   const deleteList = (e) => {
@@ -20,38 +19,9 @@ const List = (props) => {
     }
   };
 
-  /* Drag and rop functions */
   useEffect(() => {
-    console.log("render! idlist", props.state.idListDrag);
-    Sortable.create(refListItems.current, {
-      group: {
-        name: "List-items-" + props.idList,
-        pull: true,
-        put: true,
-        draggable: ".Item-list",
-      },
-      onChoose: function (e) {
-        updateDrag(+e.target.querySelectorAll(".Item-list")[e.oldIndex].id);
-      },
-      onAdd: (e) => {
-        props.refreshIdItemDrag();
-        moveTask();
-      },
-      animation: 100,
-    });
+    // console.log("render!");
   });
-
-  const updateDrag = (idItemList) => {
-    props.updateIdItemDrag(idItemList, +props.idList);
-  };
-
-  const moveTask = (idItemList) => {
-    props.moveTask(
-      props.state.idListDrag,
-      props.idList,
-      props.state.idItemDrag
-    );
-  };
 
   return (
     <div className='List' id={props.idList}>
@@ -61,21 +31,31 @@ const List = (props) => {
           <img src={deleteIcon} alt='delete' />
         </div>
       </div>
-      <div ref={refListItems} className='List-items'>
-        {listItems.tasks.map((task) => {
-          if (task && task.id) {
-            return (
-              <ItemList
-                key={task.id}
-                idList={listItems.id}
-                idTask={task.id}
-                text={task.text}
-              />
-            );
-          }
-          return "";
-        })}
-      </div>
+      <Droppable droppableId={props.idList}>
+        {(provided) => (
+          <div ref={provided.innerRef} {...provided.droppableProps}>
+            {listItems.tasks &&
+              listItems.tasks.map((task, index) => (
+                <Draggable draggableId={task.id} key={index} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}>
+                      <ItemList
+                        index={index}
+                        idList={listItems.id}
+                        idTask={task.id}
+                        text={task.text}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
       <div className='List-footer'>
         <div className='List-add-item' onClick={addTask}>
           +Add a task
@@ -111,15 +91,6 @@ const mapDispacthToProps = (dispatch) => ({
         oldIdList: oldIdList,
         newIdList: newIdList,
         idTask: idTask,
-      },
-    });
-  },
-  updateIdItemDrag: (idTask, idList) => {
-    dispatch({
-      type: "UPDATE_ITEM_DRAG",
-      payload: {
-        idTask: idTask,
-        idList: idList,
       },
     });
   },

@@ -46,21 +46,15 @@ const ItemList = (props) => {
   };
 
   useEffect(() => {
-    if (props.text) {
+    console.log("render",props.text);
+    if (props.text && props.state.isMove) {
       refItemTextarea.current.classList.add("hide");
       refItemText.current.classList.add("show");
       refDelete.current.classList.remove("hide");
-      refItemText.current.innerHTML = values.task;
+      refItemText.current.innerHTML = props.text;
+      props.updateIsmove(false);
     }
-  }, []);
-
-  /**
-   * Drag funtions
-   */
-  const handleDragStart = (e) => {
-    e.dataTransfer.effectAllowed = "move";
-    props.updateIdItemDrag(props.idTask, props.idList);
-  };
+  });
 
   return (
     <div ref={refContent} className='Item-list' id={props.idTask}>
@@ -78,7 +72,6 @@ const ItemList = (props) => {
         value={values.task}
         placeholder='Enter any text for this task'
         onChange={handleChange}
-        onKeyUp={handleChange}
         onBlur={finishEdit}></textarea>
     </div>
   );
@@ -105,12 +98,11 @@ const mapDispacthToProps = (dispatch) => ({
       },
     });
   },
-  updateIdItemDrag: (idTask, idList) => {
+  updateIsmove: (isMove) => {
     dispatch({
-      type: "UPDATE_ITEM_DRAG",
+      type: "UPDATE_ISMOVE",
       payload: {
-        idTask: idTask,
-        idList: idList,
+        isMove: isMove,
       },
     });
   },

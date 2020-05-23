@@ -7,7 +7,7 @@ const Navbar = (props) => {
   const addList = () => {
     const title = prompt("Please enter your list name (min length 3).", "");
     if (title) {
-      props.addList(Date.now(), title);
+      props.addList("List-" + Date.now(), title);
     }
   };
 
