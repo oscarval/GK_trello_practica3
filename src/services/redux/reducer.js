@@ -1,11 +1,4 @@
-const initialState = {
-  visibility: "ALL",
-  lists: [],
-  idItemDrag: null,
-  idListDrag: null,
-};
-
-function reducer(state = initialState, action) {
+function reducer(state = {}, action) {
   switch (action.type) {
     case "ADD_LIST":
       return {
@@ -57,7 +50,7 @@ function reducer(state = initialState, action) {
 
       return {
         ...state,
-        lists: updateList ? updateList : [],
+        lists: updateList,
       };
 
     case "DELETE_TASK":
@@ -77,22 +70,38 @@ function reducer(state = initialState, action) {
         ...state,
         lists: newListTasks ? newListTasks : [],
       };
+
+    case "SORT_TASKS_LIST":
+      let listToUpdate = state.lists;
+      if (action.payload.updatedTasks) {
+        listToUpdate = state.lists.map((list) => {
+          if (list.id === action.payload.idList) {
+            return {
+              ...list,
+              tasks: action.payload.updatedTasks,
+            };
+          }
+          return list;
+        });
+      }
+
+      return {
+        ...state,
+        lists: listToUpdate,
+      };
     case "MOVE_TASK_LIST":
       let taskToMove = null;
       const removeTaskList = state.lists.map((list) => {
-        if (list.id === state.idListDrag) {
+        if (list.id === action.payload.oldIdList) {
           return {
             ...list,
             tasks: list.tasks.filter((task) => {
-              if (task) {
-                if (task.id !== state.idItemDrag) {
-                  return task;
-                } else {
-                  taskToMove = task;
-                  return null;
-                }
+              if (task.id !== action.payload.idTask) {
+                return true;
+              } else {
+                taskToMove = task;
+                return false;
               }
-              return null;
             }),
           };
         }
@@ -110,33 +119,17 @@ function reducer(state = initialState, action) {
         }
       });
 
-      // console.log({
-      //   ...state,
-      //   lists: updateTaskList ? updateTaskList : [],
-      //   idItemDrag: null,
-      //   idListDrag: null,
-      // });
-
       return {
         ...state,
-        lists: updateTaskList ? updateTaskList : [],
-        idItemDrag: null,
-        idListDrag: null,
+        lists: updateTaskList,
+        isMove: false,
       };
 
-    // return {
-    //   ...state,
-    // };
-
-    case "UPDATE_ITEM_DRAG":
+    case "UPDATE_ISMOVE":
       return {
         ...state,
-        idItemDrag: action.payload.idTask,
-        idListDrag: action.payload.idList,
+        isMove: action.payload.isMove,
       };
-    case "REFRESH_ITEM_DRAG":
-      return state;
-
     default:
       return state;
   }

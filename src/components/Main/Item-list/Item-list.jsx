@@ -24,7 +24,7 @@ const ItemList = (props) => {
   };
 
   const editItem = (e) => {
-    if (refItemTextarea.current) {
+    if (e !== "undefined" && refItemTextarea.current) {
       refItemText.current.classList.remove("show");
       refItemText.current.classList.add("hide");
       refDelete.current.classList.add("hide");
@@ -39,28 +39,26 @@ const ItemList = (props) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({ ...values, [name]: value.replace(/\r?\n/gi, "") });
-    if (event.which === 13) {
+    const newValue = value.replace(/\r?\n/gi, "");
+    setValues({ ...values, [name]: newValue });
+    if (/\r?\n/gi.test(value)) {
       finishEdit();
     }
   };
 
   useEffect(() => {
-    if (props.text) {
+    console.log("renderitem");
+    if (props.text && props.state.isMove) {
       refItemTextarea.current.classList.add("hide");
       refItemText.current.classList.add("show");
       refDelete.current.classList.remove("hide");
-      refItemText.current.innerHTML = values.task;
+      refItemText.current.innerHTML = props.text;
+      props.updateIsmove(false);
     }
-  }, []);
-
-  /**
-   * Drag funtions
-   */
-  const handleDragStart = (e) => {
-    e.dataTransfer.effectAllowed = "move";
-    props.updateIdItemDrag(props.idTask, props.idList);
-  };
+    if(!props.text){
+      editItem();
+    }
+  });
 
   return (
     <div ref={refContent} className='Item-list' id={props.idTask}>
@@ -69,16 +67,17 @@ const ItemList = (props) => {
       </div>
       <div
         ref={refItemText}
-        className='Item-text'
-        onDoubleClick={editItem}></div>
+        className='Item-text show'
+        onClick={editItem}>
+        {props.text}
+      </div>
       <textarea
         ref={refItemTextarea}
-        className='Item-textarea'
+        className='Item-textarea hide'
         name='task'
         value={values.task}
         placeholder='Enter any text for this task'
         onChange={handleChange}
-        onKeyUp={handleChange}
         onBlur={finishEdit}></textarea>
     </div>
   );
@@ -105,12 +104,11 @@ const mapDispacthToProps = (dispatch) => ({
       },
     });
   },
-  updateIdItemDrag: (idTask, idList) => {
+  updateIsmove: (isMove) => {
     dispatch({
-      type: "UPDATE_ITEM_DRAG",
+      type: "UPDATE_ISMOVE",
       payload: {
-        idTask: idTask,
-        idList: idList,
+        isMove: isMove,
       },
     });
   },
