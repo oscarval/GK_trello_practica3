@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import "./Navbar.scss";
+import logo from "../../assets/img/logo.png";
 
 const Navbar = (props) => {
   const addList = () => {
@@ -12,6 +13,9 @@ const Navbar = (props) => {
 
   return (
     <div className='Navbar'>
+      <div className='Navbar-logo'>
+        <img src={logo} alt='GeeksHubs practice 3' />
+      </div>
       <div className='Navbar-title'>GeeksHubs Trello</div>
       <div className='Navbar-actions'>
         <div className='button' onClick={addList}>

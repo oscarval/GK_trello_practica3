@@ -20,6 +20,12 @@ function reducer(state = initialState, action) {
         ],
       };
 
+    case "DELETE_LIST":
+      return {
+        ...state,
+        lists: state.lists.filter((list) => list.id !== action.payload.idList),
+      };
+
     case "ADD_TASK":
       return {
         ...state,
@@ -39,7 +45,7 @@ function reducer(state = initialState, action) {
           return {
             ...list,
             tasks: list.tasks.map((task) => {
-              if (task.id === action.payload.idTask) {
+              if (task && task.id === action.payload.idTask) {
                 return { ...task, text: action.payload.text };
               }
               return task;
@@ -51,21 +57,42 @@ function reducer(state = initialState, action) {
 
       return {
         ...state,
-        lists: updateList,
+        lists: updateList ? updateList : [],
+      };
+
+    case "DELETE_TASK":
+      const newListTasks = state.lists.map((list) => {
+        if (list.id === action.payload.idList) {
+          return {
+            ...list,
+            tasks: list.tasks.filter(
+              (task) => task.id !== action.payload.idTask
+            ),
+          };
+        }
+        return list;
+      });
+
+      return {
+        ...state,
+        lists: newListTasks ? newListTasks : [],
       };
     case "MOVE_TASK_LIST":
       let taskToMove = null;
       const removeTaskList = state.lists.map((list) => {
-        if (list.id === action.payload.oldIdList) {
+        if (list.id === state.idListDrag) {
           return {
             ...list,
             tasks: list.tasks.filter((task) => {
-              if (task.id !== action.payload.idTask) {
-                return true;
-              } else {
-                taskToMove = task;
-                return false;
+              if (task) {
+                if (task.id !== state.idItemDrag) {
+                  return task;
+                } else {
+                  taskToMove = task;
+                  return null;
+                }
               }
+              return null;
             }),
           };
         }
@@ -76,24 +103,39 @@ function reducer(state = initialState, action) {
         if (list.id === action.payload.newIdList) {
           return {
             ...list,
-            tasks: [...list.tasks, taskToMove],
+            tasks: list.tasks && taskToMove ? [...list.tasks, taskToMove] : [],
           };
+        } else {
+          return list;
         }
-        return list;
       });
+
+      // console.log({
+      //   ...state,
+      //   lists: updateTaskList ? updateTaskList : [],
+      //   idItemDrag: null,
+      //   idListDrag: null,
+      // });
 
       return {
         ...state,
-        lists: updateTaskList,
+        lists: updateTaskList ? updateTaskList : [],
+        idItemDrag: null,
+        idListDrag: null,
       };
+
+    // return {
+    //   ...state,
+    // };
 
     case "UPDATE_ITEM_DRAG":
       return {
         ...state,
-        ...state.lists,
         idItemDrag: action.payload.idTask,
         idListDrag: action.payload.idList,
       };
+    case "REFRESH_ITEM_DRAG":
+      return state;
 
     default:
       return state;
