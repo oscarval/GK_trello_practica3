@@ -7,8 +7,12 @@ import { DragDropContext } from "react-beautiful-dnd";
 const Main = (props) => {
   /* DnD functions */
   const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list)[0];
-    const order = result.concat().sort((a, b) => endIndex - startIndex);
+    const result = Array.from(list);
+    result.splice(endIndex, 0, result[startIndex]);
+    const order = Array.from(new Set(result.map((a) => a.id))).map((id) => {
+      return result.find((a) => a.id === id);
+    });
+    console.log(order);
     return order;
   };
 
@@ -46,10 +50,14 @@ const Main = (props) => {
     const dInd = destination.droppableId;
 
     if (sInd === dInd) {
-      const list = props.state.lists.map((list) =>
-        list.id === sInd ? list.tasks : []
+      const list = props.state.lists.filter((list) =>
+        list.id === sInd ? true : false
       );
-      const updatedTasks = reorder(list, source.index, destination.index);
+      const updatedTasks = reorder(
+        list[0].tasks,
+        source.index,
+        destination.index
+      );
       props.sortTaskList(sInd, updatedTasks);
     } else {
       const listS = props.state.lists.filter((list) => list.id === sInd);
@@ -57,7 +65,7 @@ const Main = (props) => {
       const result = move(listS, listD, source, destination);
 
       const reorderResult = reorder(
-        [result[0].tasks],
+        result[0].tasks,
         listD.length,
         destination.index
       );

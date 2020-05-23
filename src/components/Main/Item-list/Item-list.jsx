@@ -24,7 +24,7 @@ const ItemList = (props) => {
   };
 
   const editItem = (e) => {
-    if (refItemTextarea.current) {
+    if (e !== "undefined" && refItemTextarea.current) {
       refItemText.current.classList.remove("show");
       refItemText.current.classList.add("hide");
       refDelete.current.classList.add("hide");
@@ -39,20 +39,24 @@ const ItemList = (props) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setValues({ ...values, [name]: value.replace(/\r?\n/gi, "") });
-    if (event.which === 13) {
+    const newValue = value.replace(/\r?\n/gi, "");
+    setValues({ ...values, [name]: newValue });
+    if (/\r?\n/gi.test(value)) {
       finishEdit();
     }
   };
 
   useEffect(() => {
-    console.log("render",props.text);
+    console.log("renderitem");
     if (props.text && props.state.isMove) {
       refItemTextarea.current.classList.add("hide");
       refItemText.current.classList.add("show");
       refDelete.current.classList.remove("hide");
       refItemText.current.innerHTML = props.text;
       props.updateIsmove(false);
+    }
+    if(!props.text){
+      editItem();
     }
   });
 
@@ -63,11 +67,13 @@ const ItemList = (props) => {
       </div>
       <div
         ref={refItemText}
-        className='Item-text'
-        onDoubleClick={editItem}></div>
+        className='Item-text show'
+        onClick={editItem}>
+        {props.text}
+      </div>
       <textarea
         ref={refItemTextarea}
-        className='Item-textarea'
+        className='Item-textarea hide'
         name='task'
         value={values.task}
         placeholder='Enter any text for this task'
